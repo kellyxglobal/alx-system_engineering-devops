@@ -1,0 +1,2 @@
+#!/bin/ban
+grep -i "root" /etc/passwd
