@@ -1,6 +1,25 @@
 #!/usr/bin/env bash
 # installs nginx and changes default html file
-apt-get -y update
-apt-get -y install nginx
-echo 'Hello World!' > /var/www/html/index.html
-service nginx start
+
+# Update the package index and install nginx
+apt-get update
+apt-get install -y nginx
+
+# Configure Nginx to listen on port 80
+echo "server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+
+    root /var/www/html;
+    index index.html;
+
+    location / {
+        # Return the "Hello World!" message
+        add_header Content-Type text/html;
+        return 200 '<html><body><h1>Hello World!</h1></body></html>';
+    }
+}" > /etc/nginx/sites-available/default
+
+# Restart Nginx
+service nginx restart
+
