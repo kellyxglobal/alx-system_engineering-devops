@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-#
 # Transfer a file from client to server
 
 # check if all parameters are provided
