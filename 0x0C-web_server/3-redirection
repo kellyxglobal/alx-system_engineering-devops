@@ -1,9 +1,23 @@
 #!/usr/bin/env bash
 # installs nginx and changes default html file
-apt-get -y update
-apt-get -y install nginx
-echo 'Hello World!' > /var/www/html/index.html
-# configure /redirect_me to another page
-sed -i "/server_name _;/ a\\\trewrite ^/redirect_me https://ansi.org permanent;" /etc/nginx/sites-available/default
-service nginx start
+
+# Install Nginx web server
+sudo apt-get update
+sudo apt-get install nginx -y
+
+# Create a new configuration file for the redirection
+sudo sh -c 'echo "server {
+  listen 80;
+  server_name puppr.tech;
+  return 301 \$scheme://kellyglows.com\$request_uri;
+}" > /etc/nginx/sites-available/redirect.conf'
+
+# Create a symbolic link to the configuration file in the sites-enabled directory
+sudo ln -s /etc/nginx/sites-available/redirect.conf /etc/nginx/sites-enabled/
+
+# Test the configuration file for syntax errors
+sudo nginx -t
+
+# Restart Nginx to apply the new configuration
+sudo systemctl restart nginx
 
