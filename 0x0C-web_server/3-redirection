@@ -8,7 +8,7 @@ sudo apt-get install nginx -y
 # Create a new configuration file for the redirection
 sudo sh -c 'echo "server {
   listen 80;
-  server_name puppr.tech;
+  server_name pupppr.tech;
   return 301 \$scheme://kellyglows.com\$request_uri;
 }" > /etc/nginx/sites-available/redirect.conf'
 
