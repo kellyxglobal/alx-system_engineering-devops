@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+# Set the variables
+LOCAL_FOLDER="/PuppR"
+REMOTE_SERVER="ubuntu@54.89.101.159"
+REMOTE_FOLDER="/var/www/html"
+
+# Transfer the folder to the remote server using rsync
+rsync -avz -e ssh $LOCAL_FOLDER/ $REMOTE_SERVER:$REMOTE_FOLDER/
+
+# Check the exit status of the rsync command
+if [ $? -eq 0 ]; then
+    echo "Folder transfer successful"
+else
+    echo "Folder transfer failed"
+fi
+
