@@ -7,12 +7,12 @@ sudo apt-get install nginx -y
 # Create a new configuration file for the custom 404 page
 sudo sh -c 'echo "server {
   listen 80;
-  server_name puppr;
+  server_name puppr.tech;
   error_page 404 /4.tech04.html;
   location = /404.html {
      internal;
      root /var/www/html;
-     echo \"Ceci n'est pas une page";
+     echo \"Ceci nest pas une page";
   }
 }" > /etc/nginx/sites-available/custom404.conf'
 

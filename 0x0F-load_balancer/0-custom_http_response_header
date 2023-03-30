@@ -1,10 +1,16 @@
 #!/usr/bin/env bash
-# configures a new ubuntu server as follows:
-#	- apt-get update
-# 	- install nginx
-#	- set X-Served-By header
-#	- restart server
-apt-get -y update
-apt-get -y install nginx
-sed -i "/server_name _;/ a\\\tadd_header X-Served-By \"\$HOSTNAME\";" /etc/nginx/sites-available/default
-service nginx restart
+
+# Install Nginx if it is not already installed
+if [ ! -x "$(command -v nginx)" ]; then
+  sudo apt-get update
+  sudo apt-get install -y nginx
+fi
+
+# Add custom HTTP response header to Nginx
+sudo sed -i '/http {/a \        server_tokens off;\n        add_header X-Served-By $hostname;' /etc/nginx/nginx.conf
+
+# Test the Nginx configuration for syntax errors
+sudo nginx -t
+
+# If there are no syntax errors, restart the Nginx server to apply the changes
+sudo systemctl restart nginx

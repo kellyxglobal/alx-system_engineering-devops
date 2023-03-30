@@ -2,13 +2,13 @@
 # installs nginx and changes default html file
 
 # Install Nginx web server
-sudo apt-get update
+sudo apt-get update -y
 sudo apt-get install nginx -y
 
 # Create a new configuration file for the redirection
 sudo sh -c 'echo "server {
   listen 80;
-  server_name pupppr.tech;
+  server_name puppr.tech;
   return 301 \$scheme://kellyglows.com\$request_uri;
 }" > /etc/nginx/sites-available/redirect.conf'
 

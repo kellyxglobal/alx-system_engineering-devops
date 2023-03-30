@@ -1,13 +1,15 @@
-#!/usr/bin/env bash
-# installs and configures HAproxy on a server as follows:
-#	- apt-get update
-#	- apt-get install HAproxy
-#	- configure frontend
-#	- configre backend
-#	- restart service
-sudo apt-get -y update
-sudo apt-get -y install haproxy
-echo -e "frontend firstbalance\n\tmode http\n\tbind *:80\n\tdefault_backend web_servers" >> /etc/haproxy/haproxy.cfg
-echo -e "backend web_servers\n\tmode http\n\tbalance roundrobin\n\tserver s1 34.139.26.238:80\n\tserver s2 18.207.4.175:80" >> /etc/haproxy/haproxy.cfg
-echo -e "ENABLED=1" >> /etc/default/haproxy
-sudo service haproxy restart
+nstall HAProxy if it is not already installed
+if [ ! -x "$(command -v haproxy)" ]; then
+  sudo apt-get update
+  sudo apt-get install -y haproxy
+fi
+
+# Configure HAProxy to send traffic to web-01 and web-02 using round-robin algorithm
+sudo sed -i 's/^.*frontend.*$/frontend http-in\n    bind *:80\n    default_backend servers/' /etc/haproxy/haproxy.cfg
+sudo sed -i '/^backend.*$/a \    server web-01 49554-web-01:80 check\n    server web-02 49554-web-02:80 check' /etc/haproxy/haproxy.cfg
+
+# Test the HAProxy configuration for syntax errors
+sudo haproxy -c -f /etc/haproxy/haproxy.cfg
+
+# If there are no syntax errors, restart the HAProxy server to apply the changes
+sudo systemctl restart haproxy

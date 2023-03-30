@@ -1,9 +1,43 @@
-# configures server using puppet
+install Nginx package
+package { 'nginx':
+  ensure => installed,
+}
 
-exec {'/usr/bin/env apt-get -y update': }
-exec {'/usr/bin/env apt-get -y install nginx': }
-exec {'/usr/bin/env echo "Hellow World" > /var/www/html/index.nginx-debian.html': }
-exec {'/usr/bin/env sed -i "/server_name _;/ a\\\trewrite ^/redirect_me http://www.holbertonschool.com permanent;" /etc/nginx/sites-available/default': }
-exec {'/usr/bin/env sed -i "/server_name _;/ a\\\terror_page 404 /custom_404.html;" /etc/nginx/sites-available/default': }
-exec {'/usr/bin/env echo "Ceci n\'est pas une page" > /var/www/html/custom_404.html': }
-exec {'/usr/bin/env service nginx start': }
+ Ensure Nginx service is running and enabled
+service { 'nginx':
+  ensure => running,
+  enable => true,
+}
+
+# Configure Nginx server
+file { '/etc/nginx/sites-available/default':
+  content => "
+    server {
+      listen 80;
+      server_name puppr.tech;
+
+      location / {
+        root /var/www/html;
+        index index.html;
+        try_files \$uri \$uri/ =404;
+        add_header X-Hello-World 'Hello World!';
+      }
+
+      location /redirect_me {
+        return 301 https://puppr.tech/;
+      }
+    }
+  ",
+}
+
+# Enable default site
+file { '/etc/nginx/sites-enabled/default':
+  ensure => 'link',
+  target => '/etc/nginx/sites-available/default',
+}
+
+# Remove default Nginx welcome page
+file { '/var/www/html/index.nginx-debian.html':
+  ensure => 'absent',
+}
+
